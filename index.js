@@ -141,12 +141,12 @@ io.on('connection',async client => {
   console.log('connected!')
   var user=await authenticateClient(client);
   client.join(user.uuid)
-  client.session={user,listeningFor: new Set()}
-  client.on('listen-for',(useruuid)=>{
-    client.session.listeningFor.add(useruuid)
+  client.session={user,listenFrom: new Set()}
+  client.on('listen-from',(useruuid)=>{
+    client.session.listenFrom.add(useruuid)
   })
-  client.on('stop-listen-for',(useruuid)=>{
-    client.session.listeningFor.delete(useruuid)
+  client.on('stop-listen-from',(useruuid)=>{
+    client.session.listenFrom.delete(useruuid)
   })
   client.on('chat-message',async (message)=>{
     var room=io.in(user.uuid)
@@ -154,10 +154,10 @@ io.on('connection',async client => {
     for(let sid of sids)
     {
       let socket=io.sockets.sockets.get(sid)
-      if (socket.session.listeningFor.has(user.uuid))
+      if (socket.session.listenFrom.has(user.uuid))
         socket.emit('chat-message',message)
     }
-    // if(room?.listeningFor?.has(message.from))
+    // if(room?.listenFrom?.has(message.from))
     // room.emit(message)
   })
   client.on('save-new-keys',async (message,ack)=>{
