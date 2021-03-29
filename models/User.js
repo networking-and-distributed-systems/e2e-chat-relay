@@ -1,4 +1,5 @@
 'use strict';
+const { TEXT ,STRING} = require('sequelize');
 const {
   Model
 } = require('sequelize');
@@ -12,15 +13,19 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
+    toJSON()
+    {
+      return {...this.get(),id:undefined,password:undefined}
+    }
   };
   User.init({
     uuid: {
-      type:DataTypes.STRING,
+      type:STRING,
       allowNull:false,
       defaultValue:DataTypes.UUIDV4
     },
     username: {
-      type:DataTypes.STRING,
+      type:STRING,
       allowNull:false,
       unique:true,
       validate:{
@@ -31,6 +36,21 @@ module.exports = (sequelize, DataTypes) => {
           msg:"username must only contain  Alphanumerics and underscores"
         }
       }
+    },
+    secret:{
+      type:TEXT,
+      allowNull:false,
+      unique:false
+    },
+    pid:{
+      type:TEXT,
+      allowNull:false,
+      unique:true
+    },
+    password:{
+      type:STRING,
+      allowNull:false,
+
     }
   }, {
     sequelize,
